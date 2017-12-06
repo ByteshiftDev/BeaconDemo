@@ -4,6 +4,7 @@ import Beacons from "react-native-beacons-manager";
 
 export default class App extends Component {
   componentWillMount() {
+    Beacons.requestWhenInUseAuthorization();
     Beacons.requestAlwaysAuthorization();
 
     // Monitoring
@@ -13,7 +14,7 @@ export default class App extends Component {
         uuid: "01234567-0123-0123-0123-012345678910"
       };
 
-      Beacons.startMonitoringForRegion(myRegion);
+      Beacons.startRangingBeaconsinRegion(myRegion);
       Beacons.startUpdatingLocation();
 
       console.log("YAY Beacons monitoring started successfully");
@@ -25,26 +26,18 @@ export default class App extends Component {
   componentDidMount() {
     // monitoring:
 
-    this.regionDidEnterEvent = DeviceEventEmitter.addListener(
-      "regionDidEnter",
-      ({ identifier, uuid }) => {
-        console.log("monitoring - regionDidEnter data: ", { identifier, uuid });
-      }
-    );
-
-    this.regionDidExitEvent = DeviceEventEmitter.addListener(
-      "regionDidExit",
-      ({ identifier, uuid }) => {
-        console.log("monitoring - regionDidExit data: ", { identifier, uuid });
+    this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
+      "beaconsDidRange",
+      ({ uuid }) => {
+        console.log("ranging - regionDidEnter data: ", { uuid });
       }
     );
   }
 
   componentWillUnmount() {
-    Beacons.stopMonitoringForRegion(myRegion);
+    Beacons.stopRangingBeaconsInRegion(myRegion);
     Beacons.stopUpdatingLocation();
-    this.regionDidEnterEvent.remove();
-    this.regionDidExitEvent.remove();
+    this.beaconsDidRangeEvent.remove();
   }
 
   render() {
