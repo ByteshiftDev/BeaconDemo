@@ -32,24 +32,23 @@ componentWillMount() {
   }
 }
 
+componentDidMount() {
+  // monitoring:
+  DeviceEventEmitter.addListener(
+    'regionDidEnter',
+    ({ identifier, uuid }) => {
+      console.log('monitoring - regionDidEnter data: ', { identifier, uuid });
+    }
+  );
 
-
-// monitoring:
-DeviceEventEmitter.addListener(
-  'regionDidEnter',
-  ({ identifier, uuid }) => {
-    console.log('monitoring - regionDidEnter data: ', { identifier, uuid });
-  }
-);
-
-DeviceEventEmitter.addListener(
-  'regionDidExit',
-  ({ identifier, uuid }) => {
-    console.log('monitoring - regionDidExit data: ', { identifier, uuid });
-  }
-);
-
-
+  DeviceEventEmitter.addListener(
+    'regionDidExit',
+    ({ identifier, uuid }) => {
+      console.log('monitoring - regionDidExit data: ', { identifier, uuid });
+    }
+  );
+  
+}
 
 AppRegistry.registerComponent(
   'App',
