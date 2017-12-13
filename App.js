@@ -17,7 +17,7 @@ const IDENTIFIER = "123456";
 
 export default class BeaconsDemo extends Component {
   // will be set as a reference to "beaconsDidRange" event:
-  beaconsDidRangeEvent = null;
+  regionDidEnterEvent = null;
 
   state = {
     // region information
@@ -33,10 +33,10 @@ export default class BeaconsDemo extends Component {
     const region = { identifier, uuid };
 
     // Range for beacons inside the region
-    Beacons.startRangingBeaconsInRegion(region)
-      .then(() => console.log("Beacons ranging started succesfully"))
+    Beacons.startMonitoringForRegion(region)
+      .then(() => console.log("Beacons monitoring started succesfully"))
       .catch(error =>
-        console.log(`Beacons ranging not started, error: ${error}`)
+        console.log(`Beacons monitoring not started, error: ${error}`)
       );
 
     // update location to ba able to monitor:
@@ -49,10 +49,10 @@ export default class BeaconsDemo extends Component {
     //
 
     // Ranging: Listen for beacon changes
-    this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
-      "beaconsDidRange",
+    this.regionDidEnterEvent = DeviceEventEmitter.addListener(
+      "regionDidEnter",
       data => {
-        console.log("beaconsDidRange data: ", data);
+        console.log("regionDidEnterdata: ", data);
       }
     );
   }
@@ -63,20 +63,21 @@ export default class BeaconsDemo extends Component {
     const region = { identifier, uuid };
 
     // stop ranging beacons:
-    Beacons.stopRangingBeaconsInRegion(region)
+    Beacons.stopMonitoringForRegion(region)
       .then(() => console.log("Beacons ranging stopped succesfully"))
       .catch(error =>
         console.log(`Beacons ranging not stopped, error: ${error}`)
       );
 
     // remove ranging event we registered at componentDidMount
-    this.beaconsDidRangeEvent.remove();
+    Beacons.stopUpdatingLocation();
+    this.regionDidEnterEvent.remove();
   }
 
   render() {
     return (
       <View>
-        <Text>ranging beacons</Text>
+        <Text>monitoring beacons</Text>
       </View>
     );
   }
