@@ -18,6 +18,7 @@ const IDENTIFIER = "123456";
 export default class BeaconsDemo extends Component {
   // will be set as a reference to "beaconsDidRange" event:
   regionDidEnterEvent = null;
+  regionDidExitEvent = null;
 
   state = {
     // region information
@@ -52,7 +53,20 @@ export default class BeaconsDemo extends Component {
     this.regionDidEnterEvent = DeviceEventEmitter.addListener(
       "regionDidEnter",
       data => {
-        console.log("regionDidEnterdata: ", data);
+        console.log("regionDidEnter data: ", data);
+      }
+    );
+
+    // Monitoring: Listen for device leaving the defined region
+    this.regionDidExitEvent = DeviceEventEmitter.addListener(
+      "regionDidExit",
+      ({ identifier, uuid, minor, major }) => {
+        console.log("monitoring - regionDidExit data: ", {
+          identifier,
+          uuid,
+          minor,
+          major
+        });
       }
     );
   }
@@ -71,7 +85,10 @@ export default class BeaconsDemo extends Component {
 
     // remove ranging event we registered at componentDidMount
     Beacons.stopUpdatingLocation();
+    // remove auth state event we registered at componentDidMount:
+    this.authStateDidRangeEvent.remove();
     this.regionDidEnterEvent.remove();
+    this.regionDidExitEvent.remove();
   }
 
   render() {
