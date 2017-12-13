@@ -17,8 +17,7 @@ const IDENTIFIER = "123456";
 
 export default class BeaconsDemo extends Component {
   // will be set as a reference to "beaconsDidRange" event:
-  regionDidEnterEvent = null;
-  regionDidExitEvent = null;
+  beaconsDidRangeEvent = null;
 
   state = {
     // region information
@@ -34,10 +33,10 @@ export default class BeaconsDemo extends Component {
     const region = { identifier, uuid };
 
     // Range for beacons inside the region
-    Beacons.startMonitoringForRegion(region)
-      .then(() => console.log("Beacons monitoring started succesfully"))
+    Beacons.startRangingBeaconsInRegion(region)
+      .then(() => console.log("Beacons ranging started succesfully"))
       .catch(error =>
-        console.log(`Beacons monitoring not started, error: ${error}`)
+        console.log(`Beacons ranging not started, error: ${error}`)
       );
 
     // update location to ba able to monitor:
@@ -50,23 +49,10 @@ export default class BeaconsDemo extends Component {
     //
 
     // Ranging: Listen for beacon changes
-    this.regionDidEnterEvent = DeviceEventEmitter.addListener(
-      "regionDidEnter",
+    this.beaconsDidRangeEvent = DeviceEventEmitter.addListener(
+      "beaconsDidRange",
       data => {
-        console.log("regionDidEnter data: ", data);
-      }
-    );
-
-    // Monitoring: Listen for device leaving the defined region
-    this.regionDidExitEvent = DeviceEventEmitter.addListener(
-      "regionDidExit",
-      ({ identifier, uuid, minor, major }) => {
-        console.log("monitoring - regionDidExit data: ", {
-          identifier,
-          uuid,
-          minor,
-          major
-        });
+        console.log("beaconsDidRange data: ", data);
       }
     );
   }
@@ -77,24 +63,20 @@ export default class BeaconsDemo extends Component {
     const region = { identifier, uuid };
 
     // stop ranging beacons:
-    Beacons.stopMonitoringForRegion(region)
+    Beacons.stopRangingBeaconsInRegion(region)
       .then(() => console.log("Beacons ranging stopped succesfully"))
       .catch(error =>
         console.log(`Beacons ranging not stopped, error: ${error}`)
       );
 
     // remove ranging event we registered at componentDidMount
-    Beacons.stopUpdatingLocation();
-    // remove auth state event we registered at componentDidMount:
-    this.authStateDidRangeEvent.remove();
-    this.regionDidEnterEvent.remove();
-    this.regionDidExitEvent.remove();
+    this.beaconsDidRangeEvent.remove();
   }
 
   render() {
     return (
       <View>
-        <Text>monitoring beacons</Text>
+        <Text>ranging beacons</Text>
       </View>
     );
   }
